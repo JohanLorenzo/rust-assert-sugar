@@ -1,0 +1,11 @@
+[package]
+name = "assert-sugar"
+version = "0.1.0"
+authors = ["Johan Lorenzo <rust@johan.lrnz.fr>"]
+license = "MPL2"
+description = "Syntaxic sugar around assertions"
+
+[dependencies]
+
+[dev-dependencies]
+stainless = "0.1.4"
