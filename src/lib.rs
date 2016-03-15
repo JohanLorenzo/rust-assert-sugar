@@ -19,6 +19,13 @@ macro_rules! assert_greater_than {
     })
 }
 
+#[macro_export]
+macro_rules! assert_greater_or_eq {
+    ($left:expr, $right:expr) => ({
+        assert!($left >= $right, "assertion failed: `{:?}` is not greater or equal to `{:?}`", $left, $right);
+    })
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -94,6 +101,24 @@ mod tests {
         #[should_panic(expected = "assertion failed: `0` is not greater than `0`")]
         fn should_fail_if_equal() {
             assert_greater_than!(0, 0);
+        }
+    }
+
+    mod assert_greater_or_eq {
+        #[test]
+        fn should_pass() {
+            assert_greater_or_eq!(1, 0);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `0` is not greater or equal to `1`")]
+        fn should_fail() {
+            assert_greater_or_eq!(0, 1);
+        }
+
+        #[test]
+        fn should_pass_if_equal() {
+            assert_greater_or_eq!(0, 0);
         }
     }
 }
