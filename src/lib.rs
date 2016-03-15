@@ -26,6 +26,20 @@ macro_rules! assert_greater_or_eq {
     })
 }
 
+#[macro_export]
+macro_rules! assert_less_than {
+    ($left:expr, $right:expr) => ({
+        assert!($left < $right, "assertion failed: `{:?}` is not less than `{:?}`", $left, $right);
+    })
+}
+
+#[macro_export]
+macro_rules! assert_less_or_eq {
+    ($left:expr, $right:expr) => ({
+        assert!($left <= $right, "assertion failed: `{:?}` is not less or equal to `{:?}`", $left, $right);
+    })
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -119,6 +133,43 @@ mod tests {
         #[test]
         fn should_pass_if_equal() {
             assert_greater_or_eq!(0, 0);
+        }
+    }
+
+    mod assert_less_than {
+        #[test]
+        fn should_pass() {
+            assert_less_than!(0, 1);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `1` is not less than `0`")]
+        fn should_fail() {
+            assert_less_than!(1, 0);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `0` is not less than `0`")]
+        fn should_fail_if_equal() {
+            assert_less_than!(0, 0);
+        }
+    }
+
+    mod assert_less_or_eq {
+        #[test]
+        fn should_pass() {
+            assert_less_or_eq!(0, 1);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `1` is not less or equal to `0`")]
+        fn should_fail() {
+            assert_less_or_eq!(1, 0);
+        }
+
+        #[test]
+        fn should_pass_if_equal() {
+            assert_less_or_eq!(0, 0);
         }
     }
 }
