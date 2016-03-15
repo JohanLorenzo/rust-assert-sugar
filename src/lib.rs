@@ -1,4 +1,3 @@
-
 #[macro_export]
 macro_rules! assert_err {
     ($error:expr , $expected_message:expr) => ({
@@ -10,6 +9,13 @@ macro_rules! assert_err {
 macro_rules! assert_none {
     ($option:expr) => ({
         assert!($option.is_none(), "assertion failed: `{:?}` is not None", $option);
+    })
+}
+
+#[macro_export]
+macro_rules! assert_greater_than {
+    ($left:expr, $right:expr) => ({
+        assert!($left > $right, "assertion failed: `{:?}` is not greater than `{:?}`", $left, $right);
     })
 }
 
@@ -69,6 +75,25 @@ mod tests {
         fn should_fail_if_none_is_not_returned() {
             let err: Option<u8> = Some(1);
             assert_none!(err);
+        }
+    }
+
+    mod assert_greater_than {
+        #[test]
+        fn should_pass() {
+            assert_greater_than!(1, 0);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `0` is not greater than `1`")]
+        fn should_fail() {
+            assert_greater_than!(0, 1);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `0` is not greater than `0`")]
+        fn should_fail_if_equal() {
+            assert_greater_than!(0, 0);
         }
     }
 }
