@@ -8,4 +8,3 @@ description = "Syntaxic sugar around assertions"
 [dependencies]
 
 [dev-dependencies]
-stainless = "0.1.4"
