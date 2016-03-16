@@ -121,7 +121,7 @@ mod tests {
             struct Foo;
 
             impl Foo {
-                pub fn bar(&self) -> Result<u8, String> {
+                fn bar(&self) -> Result<u8, String> {
                     Err("Foo failed to bar".to_owned())
                 }
             }
