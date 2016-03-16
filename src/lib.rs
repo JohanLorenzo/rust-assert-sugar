@@ -78,10 +78,21 @@ macro_rules! assert_less_or_eq {
 
 #[macro_export]
 macro_rules! assert_length {
-    ($array:expr , $expected_length:expr) => ({
+    ($array:expr, $expected_length:expr) => ({
         let length = &($array).len();
         assert_equal!(length, &($expected_length), "assertion failed: `{:?}` has a length of {}. {} was was expected.",
             $array, length, $expected_length);
+    })
+}
+
+#[macro_export]
+macro_rules! assert_in {
+    ($expected_element:expr, $array:expr) => ({
+        let mut array_that_should_contain_element = $array.clone();
+        array_that_should_contain_element.retain(|&x| x == $expected_element);
+        let length = array_that_should_contain_element.len();
+        _assert_operation!(length, 0, >, "assertion failed: `{:?}` doesn't contain `{:?}`.",
+            $array, $expected_element);
     })
 }
 
@@ -243,6 +254,21 @@ mod tests {
         fn should_fail() {
             let vector = vec!["a","b"];
             assert_length!(vector, 1);
+        }
+    }
+
+    mod assert_in {
+        #[test]
+        fn should_pass() {
+            let vector = vec!["a","b"];
+            assert_in!("a", vector);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `[\"a\", \"b\"]` doesn't contain `\"z\"`.")]
+        fn should_fail() {
+            let vector = vec!["a","b"];
+            assert_in!("z", vector);
         }
     }
 }
