@@ -28,7 +28,7 @@ macro_rules! assert_equal {
 #[macro_export]
 macro_rules! assert_err {
     ($error:expr , $expected_message:expr) => ({
-        assert_eq!(&($error).unwrap_err(), &($expected_message));
+        assert_equal!(&($error).unwrap_err(), &($expected_message), "assertion failed: error is not equal to {}", $expected_message);
     })
 }
 
@@ -42,42 +42,37 @@ macro_rules! assert_none {
 #[macro_export]
 macro_rules! assert_not_eq {
     ($left:expr , $right:expr) => ({
-        match (&($left), &($right)) {
-            (left_val, right_val) => {
-                if *left_val == *right_val {
-                    panic!("assertion failed: `{:?}` is equal to `{:?}`", $left, $right)
-                }
-            }
-        }
+        _assert_operation!($left, $right, !=, "assertion failed: `{:?}` is equal to `{:?}`", $left, $right)
     })
+
 }
 
 
 #[macro_export]
 macro_rules! assert_greater_than {
     ($left:expr, $right:expr) => ({
-        assert!($left > $right, "assertion failed: `{:?}` is not greater than `{:?}`", $left, $right);
+        _assert_operation!($left, $right, >, "assertion failed: `{:?}` is not greater than `{:?}`", $left, $right);
     })
 }
 
 #[macro_export]
 macro_rules! assert_greater_or_eq {
     ($left:expr, $right:expr) => ({
-        assert!($left >= $right, "assertion failed: `{:?}` is not greater or equal to `{:?}`", $left, $right);
+        _assert_operation!($left, $right, >=, "assertion failed: `{:?}` is not greater or equal to `{:?}`", $left, $right);
     })
 }
 
 #[macro_export]
 macro_rules! assert_less_than {
     ($left:expr, $right:expr) => ({
-        assert!($left < $right, "assertion failed: `{:?}` is not less than `{:?}`", $left, $right);
+        _assert_operation!($left, $right, <, "assertion failed: `{:?}` is not less than `{:?}`", $left, $right);
     })
 }
 
 #[macro_export]
 macro_rules! assert_less_or_eq {
     ($left:expr, $right:expr) => ({
-        assert!($left <= $right, "assertion failed: `{:?}` is not less or equal to `{:?}`", $left, $right);
+        _assert_operation!($left, $right, <=, "assertion failed: `{:?}` is not less or equal to `{:?}`", $left, $right);
     })
 }
 
