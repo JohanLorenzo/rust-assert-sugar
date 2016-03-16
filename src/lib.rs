@@ -1,3 +1,30 @@
+macro_rules! _expr {
+    ($e:expr) => {
+        $e
+    }
+}
+
+macro_rules! _assert_operation {
+    ($left:expr , $right:expr, $operator:tt, $($arg:tt)+) => ({
+        match (&($left), &($right)) {
+            (left_val, right_val) => {
+                let operation_result = _expr!(left_val $operator right_val);
+                if !operation_result {
+                    panic!($($arg)+);
+                }
+            }
+        }
+    })
+}
+
+#[macro_export]
+macro_rules! assert_equal {
+    ($left:expr, $right:expr, $($arg:tt)+) => (
+        _assert_operation!($left, $right, ==, $($arg)+);
+    );
+}
+
+
 #[macro_export]
 macro_rules! assert_err {
     ($error:expr , $expected_message:expr) => ({
@@ -51,6 +78,15 @@ macro_rules! assert_less_than {
 macro_rules! assert_less_or_eq {
     ($left:expr, $right:expr) => ({
         assert!($left <= $right, "assertion failed: `{:?}` is not less or equal to `{:?}`", $left, $right);
+    })
+}
+
+#[macro_export]
+macro_rules! assert_length {
+    ($array:expr , $expected_length:expr) => ({
+        let length = &($array).len();
+        assert_equal!(length, &($expected_length), "assertion failed: `{:?}` has a length of {}. {} was was expected.",
+            $array, length, $expected_length);
     })
 }
 
@@ -197,6 +233,21 @@ mod tests {
         #[test]
         fn should_pass_if_equal() {
             assert_less_or_eq!(0, 0);
+        }
+    }
+
+    mod assert_length {
+        #[test]
+        fn should_pass() {
+            let vector = vec!["a","b"];
+            assert_length!(vector, 2);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `[\"a\", \"b\"]` has a length of 2. 1 was was expected.")]
+        fn should_fail() {
+            let vector = vec!["a","b"];
+            assert_length!(vector, 1);
         }
     }
 }
