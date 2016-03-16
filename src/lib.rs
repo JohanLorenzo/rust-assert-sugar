@@ -13,6 +13,20 @@ macro_rules! assert_none {
 }
 
 #[macro_export]
+macro_rules! assert_not_eq {
+    ($left:expr , $right:expr) => ({
+        match (&($left), &($right)) {
+            (left_val, right_val) => {
+                if *left_val == *right_val {
+                    panic!("assertion failed: `{:?}` is equal to `{:?}`", $left, $right)
+                }
+            }
+        }
+    })
+}
+
+
+#[macro_export]
 macro_rules! assert_greater_than {
     ($left:expr, $right:expr) => ({
         assert!($left > $right, "assertion failed: `{:?}` is not greater than `{:?}`", $left, $right);
@@ -96,6 +110,19 @@ mod tests {
         fn should_fail_if_none_is_not_returned() {
             let err: Option<u8> = Some(1);
             assert_none!(err);
+        }
+    }
+
+    mod assert_not_eq {
+        #[test]
+        fn should_pass() {
+            assert_not_eq!(1, 0);
+        }
+
+        #[test]
+        #[should_panic(expected = "assertion failed: `0` is equal to `0`")]
+        fn should_fail() {
+            assert_not_eq!(0, 0);
         }
     }
 
